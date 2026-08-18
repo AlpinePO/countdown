@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Learning to Let Go</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600&display=swap');
+
+  :root {
+    --sky: #f6f1e7;
+    --sky-low: #ece3d2;
+    --sage: #7c9473;
+    --sage-deep: #5c7454;
+    --water: #7fa3ac;
+    --clay: #c98a63;
+    --ink: #3a352c;
+    --ink-soft: #6b6455;
+    --card: #fffdf8;
+    --card-edge: #e4dbc8;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    padding: 40px 16px 64px;
+    background: linear-gradient(180deg, var(--sky) 0%, var(--sky) 55%, var(--sky-low) 100%);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .wrap { max-width: 780px; margin: 0 auto; }
+
+  /* --- floating leaf motif --- */
+  .leaf-motif {
+    display: block;
+    margin: 0 auto 8px;
+    width: 46px;
+    height: 46px;
+    animation: drift 6s ease-in-out infinite;
+  }
+  @keyframes drift {
+    0%, 100% { transform: translateY(0) rotate(-4deg); }
+    50% { transform: translateY(-6px) rotate(4deg); }
+  }
+
+  header.masthead { text-align: center; margin-bottom: 32px; }
+
+  .eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--sage-deep);
+    font-weight: 600;
+  }
+
+  h1 {
+    font-family: 'Lora', serif;
+    font-weight: 500;
+    font-size: clamp(30px, 5vw, 42px);
+    margin: 10px 0 10px;
+    color: var(--ink);
+  }
+
+  .subhead {
+    font-family: 'Lora', serif;
+    font-style: italic;
+    color: var(--ink-soft);
+    font-size: 15px;
+    max-width: 520px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  /* --- release cards --- */
+  .release-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+  @media (max-width: 600px) {
+    .release-row { grid-template-columns: 1fr; }
+  }
+
+  .release-card {
+    background: var(--card);
+    border: 1px solid var(--card-edge);
+    border-radius: 14px;
+    padding: 20px 18px;
+    text-align: center;
+    box-shadow: 0 10px 26px rgba(90, 80, 55, 0.08);
+  }
+
+  .release-label {
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 4px;
+  }
+  .release-date {
+    font-size: 11px;
+    color: var(--ink-soft);
+    opacity: 0.75;
+    margin-bottom: 12px;
+  }
+
+  .release-number {
+    font-family: 'Lora', serif;
+    font-weight: 600;
+    font-size: clamp(38px, 8vw, 52px);
+    color: var(--sage-deep);
+    line-height: 1;
+  }
+  .release-unit {
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-top: 4px;
+    letter-spacing: 0.04em;
+  }
+
+  .release-status {
+    display: inline-block;
+    margin-top: 12px;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 999px;
+  }
+  .release-status.steady { background: rgba(124,148,115,0.15); color: var(--sage-deep); }
+  .release-status.close  { background: rgba(201,138,99,0.18); color: var(--clay); }
+  .release-status.today  { background: rgba(127,163,172,0.2); color: var(--water); }
+  .release-status.done   { background: rgba(124,148,115,0.25); color: var(--sage-deep); }
+
+  /* --- adjustments --- */
+  .adjustments {
+    background: var(--card);
+    border: 1px dashed var(--card-edge);
+    border-radius: 14px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+  }
+  .adj-title {
+    font-family: 'Lora', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--sage-deep);
+    margin-bottom: 10px;
+  }
+  .adj-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 7px 0;
+  }
+  .adj-row label {
+    font-size: 13px;
+    color: var(--ink);
+    display: flex;
+    flex-direction: column;
+  }
+  .adj-hint { font-size: 11px; color: var(--ink-soft); margin-top: 2px; }
+  .adj-row input[type="number"] {
+    width: 68px;
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    text-align: center;
+    background: var(--sky);
+    border: 1px solid var(--card-edge);
+    color: var(--sage-deep);
+    border-radius: 6px;
+    padding: 8px 4px;
+    flex-shrink: 0;
+  }
+  .adj-row input[type="number"]:focus { outline: 2px solid var(--sage); outline-offset: 1px; }
+  .adj-note {
+    font-size: 11px;
+    color: var(--ink-soft);
+    margin-top: 8px;
+    border-top: 1px solid var(--card-edge);
+    padding-top: 8px;
+  }
+
+  /* --- today card --- */
+  .today-card {
+    background: var(--card);
+    border: 1px solid var(--card-edge);
+    border-radius: 14px;
+    padding: 18px 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 10px 26px rgba(90, 80, 55, 0.06);
+  }
+  .today-eyebrow { font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink-soft); }
+  .today-date {
+    font-family: 'Lora', serif;
+    font-size: 19px;
+    margin-top: 4px;
+    color: var(--ink);
+  }
+  .day-notes { margin-top: 10px; display: flex; flex-direction: column; gap: 6px; }
+  .day-note {
+    font-size: 13px;
+    color: var(--sage-deep);
+    background: rgba(124,148,115,0.1);
+    border-radius: 8px;
+    padding: 6px 10px;
+    display: inline-block;
+  }
+
+  /* --- thought card --- */
+  .thought-card {
+    background: var(--card);
+    border: 1px solid var(--card-edge);
+    border-radius: 16px;
+    padding: 22px;
+    box-shadow: 0 14px 30px rgba(90, 80, 55, 0.1);
+  }
+  .thought-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .thought-head h2 {
+    font-family: 'Lora', serif;
+    font-style: italic;
+    font-weight: 500;
+    font-size: 16px;
+    color: var(--sage-deep);
+    margin: 0;
+  }
+
+  .photo-frame {
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+    background: var(--sky-low);
+  }
+  .photo-frame img {
+    width: 100%;
+    display: block;
+    min-height: 220px;
+    max-height: 380px;
+    object-fit: cover;
+  }
+  .caption-wrap {
+    padding: 16px 4px 4px;
+    text-align: center;
+  }
+  .caption {
+    font-family: 'Lora', serif;
+    font-style: italic;
+    font-size: 16px;
+    color: var(--ink);
+    line-height: 1.5;
+  }
+  .photo-credit {
+    font-size: 10px;
+    color: var(--ink-soft);
+    margin-top: 10px;
+    text-align: right;
+  }
+  .photo-credit a { color: var(--ink-soft); }
+
+  .letgo-btn {
+    font-family: 'Inter', sans-serif;
+    background: var(--sage);
+    color: #fff;
+    border: none;
+    padding: 11px 18px;
+    min-height: 40px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    white-space: nowrap;
+  }
+  .letgo-btn:hover { background: var(--sage-deep); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(92,116,84,0.3); }
+  .letgo-btn:disabled { opacity: 0.5; cursor: wait; }
+
+  .loading-text {
+    font-size: 13px;
+    color: var(--ink-soft);
+    text-align: center;
+    padding: 40px 0;
+    font-style: italic;
+    font-family: 'Lora', serif;
+  }
+
+  footer {
+    text-align: center;
+    margin-top: 30px;
+    font-size: 13px;
+    color: var(--ink-soft);
+    font-family: 'Lora', serif;
+    font-style: italic;
+    padding: 0 8px;
+  }
+
+  /* --- Mobile optimisation --- */
+  @media (max-width: 480px) {
+    body { padding: 24px 12px 48px; }
+
+    .leaf-motif { width: 38px; height: 38px; }
+
+    .eyebrow { font-size: 10px; letter-spacing: 0.14em; padding: 0 8px; }
+
+    h1 { font-size: 26px; margin: 8px 0; }
+
+    .subhead { font-size: 14px; padding: 0 4px; }
+
+    .release-row { gap: 10px; margin-bottom: 16px; }
+
+    .release-card { padding: 16px 12px; border-radius: 12px; }
+
+    .release-number { font-size: 34px; }
+
+    .release-status { font-size: 10px; padding: 4px 8px; white-space: nowrap; }
+
+    .adjustments { padding: 14px 16px; margin-bottom: 16px; }
+
+    .adj-row {
+      flex-wrap: wrap;
+      gap: 4px 10px;
+    }
+    .adj-row label { flex: 1 1 auto; min-width: 150px; }
+    .adj-hint { font-size: 10px; }
+
+    .today-card { padding: 16px; margin-bottom: 16px; }
+    .today-date { font-size: 17px; }
+    .day-note { font-size: 12px; }
+
+    .thought-card { padding: 16px; border-radius: 14px; }
+    .thought-head { justify-content: center; text-align: center; }
+    .thought-head h2 { width: 100%; text-align: center; }
+    .letgo-btn { width: 100%; }
+
+    .photo-frame img { min-height: 180px; max-height: 260px; }
+
+    .caption { font-size: 15px; }
+
+    footer { font-size: 12px; margin-top: 24px; }
+  }
+
+  /* Comfortable tap targets on any touch device, regardless of width */
+  @media (hover: none) and (pointer: coarse) {
+    .letgo-btn { min-height: 44px; }
+    .adj-row input[type="number"] { min-height: 40px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <svg class="leaf-motif" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M8 40C8 24 18 8 40 8C40 30 24 40 8 40Z" fill="#7c9473" opacity="0.85"/>
+      <path d="M9 39C16 30 24 22 39 9" stroke="#f6f1e7" stroke-width="1.2" stroke-linecap="round"/>
+    </svg>
+    <div class="eyebrow">A Journey of Growth and Joy, Not a Countdown</div>
+    <h1>Learning to Let Go</h1>
+    <div class="subhead">Some things were ok to care about. An organisation that no longer works the way it should, is no longer one of them. Now is your time to quietly notice the remaining days, and remember it is no longer your problem.</div>
+  </header>
+
+  <div class="release-row" id="release-row">
+    <!-- filled by JS -->
+  </div>
+
+  <div class="adjustments" id="adjustments">
+    <div class="adj-title">This is your time, nobody elses.</div>
+    <div class="adj-row">
+      <label for="holiday-input">
+        Holiday
+        <span class="adj-hint">days off between now and the end date</span>
+      </label>
+      <input type="number" id="holiday-input" step="1">
+    </div>
+    <div class="adj-row">
+      <label for="homeoffice-input">
+        Home Office
+        <span class="adj-hint">remote days, not on-site</span>
+      </label>
+      <input type="number" id="homeoffice-input" step="1">
+    </div>
+    <div class="adj-note" id="adj-note"></div>
+  </div>
+
+  <div class="today-card">
+    <div class="today-eyebrow">Today</div>
+    <div class="today-date" id="today-date">—</div>
+    <div class="day-notes" id="day-notes"></div>
+  </div>
+
+  <div class="thought-card">
+    <div class="thought-head">
+      <h2>Something to hold onto!</h2>
+      <button class="letgo-btn" id="letgo-btn">Let go, show me another</button>
+    </div>
+    <div class="photo-frame">
+      <img id="photo" src="" alt="A peaceful thought" style="display:none;">
+      <div class="loading-text" id="loading-text">Finding something quieter…</div>
+    </div>
+    <div class="caption-wrap">
+      <div class="caption" id="caption"></div>
+    </div>
+    <div class="photo-credit" id="photo-credit"></div>
+  </div>
+
+  <footer>"The tide does not fight the shore. It simply lets go, and returns."</footer>
+</div>
+
+<script>
+// ---------- Dates ----------
+const LAST_WORKING_DAY = new Date(2028, 3, 28); // April 28 2028
+const OFFICIAL_LAST_DAY = new Date(2028, 3, 30); // April 30 2028
+
+function startOfDay(d) { return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
+function addDays(d, n) { const r = new Date(d); r.setDate(r.getDate() + n); return r; }
+function sameDate(a, b) { return startOfDay(a).getTime() === startOfDay(b).getTime(); }
+function dateKey(d) { return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); }
+
+// ---------- Austrian public holidays ----------
+function easterSunday(year) {
+  const a = year % 19;
+  const b = Math.floor(year / 100);
+  const c = year % 100;
+  const d = Math.floor(b / 4);
+  const e = b % 4;
+  const f = Math.floor((b + 8) / 25);
+  const g = Math.floor((b - f + 1) / 3);
+  const h = (19 * a + b - d - g + 15) % 30;
+  const i = Math.floor(c / 4);
+  const k = c % 4;
+  const l = (32 + 2 * e + 2 * i - h - k) % 7;
+  const m = Math.floor((a + 11 * h + 22 * l) / 451);
+  const month = Math.floor((h + l - 7 * m + 114) / 31);
+  const day = ((h + l - 7 * m + 114) % 31) + 1;
+  return new Date(year, month - 1, day);
+}
+
+function austrianHolidays(year) {
+  const easter = easterSunday(year);
+  const fixed = [
+    new Date(year, 0, 1), new Date(year, 0, 6), new Date(year, 4, 1),
+    new Date(year, 7, 15), new Date(year, 9, 26), new Date(year, 10, 1),
+    new Date(year, 11, 8), new Date(year, 11, 25), new Date(year, 11, 26)
+  ];
+  const movable = [addDays(easter, 1), addDays(easter, 39), addDays(easter, 50), addDays(easter, 60)];
+  return [...fixed, ...movable];
+}
+
+function austrianHolidayKeySet(years) {
+  const set = new Set();
+  years.forEach(y => austrianHolidays(y).forEach(d => set.add(dateKey(d))));
+  return set;
+}
+
+function isWorkingDay(d, holidaySet) {
+  const dow = d.getDay();
+  if (dow === 0 || dow === 6) return false;
+  if (holidaySet.has(dateKey(d))) return false;
+  return true;
+}
+
+function workingDaysInclusive(from, to) {
+  let start = startOfDay(from);
+  let end = startOfDay(to);
+  let sign = 1;
+  if (start > end) { [start, end] = [end, start]; sign = -1; }
+  const years = new Set([start.getFullYear(), end.getFullYear()]);
+  const holidaySet = austrianHolidayKeySet(years);
+  let count = 0;
+  let cur = start;
+  while (cur <= end) {
+    if (isWorkingDay(cur, holidaySet)) count++;
+    cur = addDays(cur, 1);
+  }
+  return count * sign;
+}
+
+// ---------- Holiday / Home Office adjustments ----------
+function calcHolidayDefault() {
+  const now = new Date();
+  const MS_PER_WEEK = 7 * 24 * 60 * 60 * 1000;
+  const weeks = (startOfDay(OFFICIAL_LAST_DAY) - startOfDay(now)) / MS_PER_WEEK;
+  return Math.round(weeks * 0.6);
+}
+
+const holidayDefault = calcHolidayDefault();
+let holidayValue = holidayDefault;
+let homeOfficeValue = 0;
+
+function renderReleaseCard(label, dateStr, days, isToday) {
+  let statusClass, statusText, unitText;
+  if (days > 1) {
+    statusClass = 'steady'; statusText = 'It goes quicker than you know'; unitText = 'work days left';
+  } else if (isToday) {
+    statusClass = 'today'; statusText = 'Set it down today'; unitText = '';
+  } else if (days === 1) {
+    statusClass = 'close'; statusText = 'Almost weightless'; unitText = 'work day left';
+  } else {
+    statusClass = 'done'; statusText = 'Already let go'; unitText = 'work days ago';
+  }
+  const numberDisplay = isToday && days <= 1 ? '🍃' : Math.abs(days);
+  return `
+    <div class="release-card">
+      <div class="release-label">${label}</div>
+      <div class="release-date">${dateStr}</div>
+      <div class="release-number">${numberDisplay}</div>
+      <div class="release-unit">${unitText}</div>
+      <div class="release-status ${statusClass}">${statusText}</div>
+    </div>`;
+}
+
+function renderDayNotes(now) {
+  const notes = [];
+  const holidaySet = austrianHolidayKeySet([now.getFullYear()]);
+  const dow = now.getDay();
+  if (holidaySet.has(dateKey(now))) {
+    notes.push('🎉 Public holiday in Austria — a small, free preview of what is coming.');
+  }
+  if (dow === 0 || dow === 6) {
+    notes.push('🌿 It is the weekend. A good day to practice not caring about work, on purpose.');
+  }
+  if (dow === 5) {
+    notes.push('🍻 It is Friday — the closest a weekday gets to peace.');
+  }
+  const container = document.getElementById('day-notes');
+  container.innerHTML = notes.map(n => `<div class="day-note">${n}</div>`).join('');
+}
+
+function renderBoard() {
+  const now = new Date();
+  const wWork = workingDaysInclusive(now, LAST_WORKING_DAY);
+  const wOfficial = workingDaysInclusive(now, OFFICIAL_LAST_DAY);
+  const todayIsLastDay = sameDate(now, LAST_WORKING_DAY);
+  const todayIsOfficial = sameDate(now, OFFICIAL_LAST_DAY);
+
+  const deduction = (Number.isFinite(holidayValue) ? holidayValue : 0)
+                  + (Number.isFinite(homeOfficeValue) ? homeOfficeValue : 0);
+
+  const adjWork = Math.max(0, wWork - deduction);
+  const adjOfficial = Math.max(0, wOfficial - deduction);
+
+  const row = document.getElementById('release-row');
+  row.innerHTML =
+    renderReleaseCard('Still carrying it', 'until 28 Apr 2028', adjWork, todayIsLastDay && deduction === 0) +
+    renderReleaseCard('Fully released', 'until 30 Apr 2028', adjOfficial, todayIsOfficial && deduction === 0);
+
+  document.getElementById('today-date').textContent = now.toLocaleDateString(undefined, {
+    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+  });
+  renderDayNotes(now);
+
+  const note = document.getElementById('adj-note');
+  if (note) {
+    note.textContent = `Raw working days remaining: ${wWork}. Minus ${holidayValue} holiday + ${homeOfficeValue} home office = ${adjWork}.`;
+  }
+}
+
+function initAdjustmentInputs() {
+  const holidayInput = document.getElementById('holiday-input');
+  const homeOfficeInput = document.getElementById('homeoffice-input');
+
+  holidayInput.value = holidayDefault;
+  homeOfficeInput.value = 0;
+  holidayInput.placeholder = String(holidayDefault);
+
+  holidayInput.addEventListener('input', () => {
+    const v = parseInt(holidayInput.value, 10);
+    holidayValue = Number.isFinite(v) ? v : holidayDefault;
+    renderBoard();
+  });
+
+  homeOfficeInput.addEventListener('input', () => {
+    const v = parseInt(homeOfficeInput.value, 10);
+    homeOfficeValue = Number.isFinite(v) ? v : 0;
+    renderBoard();
+  });
+}
+
+initAdjustmentInputs();
+renderBoard();
+setInterval(renderBoard, 60 * 1000);
+
+// ---------- Daily / on-demand "letting go" thought ----------
+// Wikimedia Commons categories chosen for calm, peace, and quiet hobbies —
+// paired with short reflections on letting go rather than jokes.
+const THOUGHTS = [
+  { cat: 'Meditation',        caption: 'Sit. Breathe. Let the org chart dissolve for a while.' },
+  { cat: 'Rivers',            caption: 'Water never argues with the rocks. It simply moves around them.' },
+  { cat: 'Sunsets',           caption: 'A good day is allowed to end without an action item.' },
+  { cat: 'Gardening',         caption: 'Grow something that has never once asked for a status update.' },
+  { cat: 'Recreational fishing', caption: 'The line goes out, and the mind, finally, goes quiet.' },
+  { cat: 'Sailing',           caption: 'The wind changes direction without apologising. So can you.' },
+  { cat: 'Mountains',         caption: 'The summit has never once cared about the quarterly numbers.' },
+  { cat: 'Tea culture',       caption: 'A cup of tea has never asked to be CC\u2019d on anything.' },
+  { cat: 'Japanese gardens',  caption: 'Rake the gravel. Not the inbox.' },
+  { cat: 'Autumn',            caption: 'Some things are simply meant to fall. Let them.' },
+  { cat: 'Waterfalls',        caption: 'Constant motion. Zero urgency.' },
+  { cat: 'Birdwatching',      caption: 'They migrated south without writing a single handover document.' },
+  { cat: 'Astronomy',         caption: 'The stars retired billions of years ago and still show up every night.' },
+  { cat: 'Woodworking',       caption: 'Measure twice. Care once. Then put the tool down.' },
+  { cat: 'Watercolor paintings', caption: 'There is no wrong colour for a quiet Tuesday.' },
+  { cat: 'Campfires',         caption: 'Warmth, with no meeting invite attached.' },
+  { cat: 'Yoga',              caption: 'Bend gently. Hold onto nothing that was never yours to carry.' },
+  { cat: 'Hiking',            caption: 'The trail keeps going. The org chart does not have to.' },
+  { cat: 'Lakes',             caption: 'Still water reflects everything and clings to nothing.' },
+  { cat: 'Beaches',           caption: 'The shoreline redraws itself every day and never complains about scope creep.' }
+];
+
+const BAD_WORDS = ['icon','logo','seal','flag','map','diagram','symbol','coa','crest','svg','template'];
+
+function dayOfYear(d) {
+  const start = new Date(d.getFullYear(), 0, 0);
+  return Math.floor((d - start) / (24 * 60 * 60 * 1000));
+}
+
+let thoughtIndex = dayOfYear(new Date()) % THOUGHTS.length;
+let cache = {};
+
+async function fetchCategoryImages(cat) {
+  if (cache[cat]) return cache[cat];
+  const endpoint = 'https://commons.wikimedia.org/w/api.php?action=query&generator=categorymembers'
+    + '&gcmtitle=' + encodeURIComponent('Category:' + cat)
+    + '&gcmtype=file&gcmlimit=50&prop=imageinfo&iiprop=url|extmetadata|mime&format=json&origin=*';
+  const res = await fetch(endpoint);
+  const data = await res.json();
+  const pages = data && data.query && data.query.pages ? Object.values(data.query.pages) : [];
+  const list = pages
+    .map(p => p.imageinfo && p.imageinfo[0])
+    .filter(info => info && info.mime && (info.mime === 'image/jpeg' || info.mime === 'image/png'))
+    .filter(info => {
+      const lower = info.url.toLowerCase();
+      return !BAD_WORDS.some(w => lower.includes(w));
+    })
+    .map(info => {
+      const meta = info.extmetadata || {};
+      const artist = meta.Artist ? meta.Artist.value.replace(/<[^>]+>/g, '') : 'Wikimedia Commons contributor';
+      return { url: info.url, credit: artist };
+    });
+  cache[cat] = list;
+  return list;
+}
+
+function seededPick(list, seed) {
+  const x = Math.sin(seed) * 10000;
+  const frac = x - Math.floor(x);
+  return list[Math.floor(frac * list.length)];
+}
+
+function creditEscape(s) {
+  const div = document.createElement('div');
+  div.textContent = s;
+  return div.innerHTML;
+}
+
+async function showThought(index, opts = {}) {
+  const thought = THOUGHTS[index];
+  const img = document.getElementById('photo');
+  const loadingText = document.getElementById('loading-text');
+  const caption = document.getElementById('caption');
+  const credit = document.getElementById('photo-credit');
+
+  img.style.display = 'none';
+  caption.textContent = '';
+  credit.textContent = '';
+  loadingText.style.display = 'block';
+  loadingText.textContent = 'Finding something quieter…';
+
+  try {
+    const list = await fetchCategoryImages(thought.cat);
+    if (!list.length) throw new Error('no images');
+    const seed = opts.random ? Math.random() * 100000 : dayOfYear(new Date()) + index * 17;
+    const pick = opts.random ? list[Math.floor(Math.random() * list.length)] : seededPick(list, seed);
+
+    img.onload = () => { loadingText.style.display = 'none'; img.style.display = 'block'; };
+    img.onerror = () => { loadingText.textContent = 'That thought is unavailable right now. Try another.'; };
+    img.src = pick.url;
+    caption.textContent = thought.caption;
+    credit.innerHTML = 'Photo via Wikimedia Commons · ' + creditEscape(pick.credit);
+  } catch (e) {
+    loadingText.textContent = 'That thought is unavailable right now. Try another.';
+  }
+}
+
+showThought(thoughtIndex);
+
+document.getElementById('letgo-btn').addEventListener('click', async () => {
+  const btn = document.getElementById('letgo-btn');
+  btn.disabled = true;
+  thoughtIndex = (thoughtIndex + 1) % THOUGHTS.length;
+  await showThought(thoughtIndex, { random: true });
+  btn.disabled = false;
+});
+</script>
+</body>
+</html>

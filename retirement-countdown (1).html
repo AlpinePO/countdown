@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Now Boarding: Retirement</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap');
+
+  :root {
+    --board-navy: #0b1e2d;
+    --panel: #14293a;
+    --panel-edge: #1f3a52;
+    --flap-amber: #f4a521;
+    --paper: #f2ede3;
+    --paper-dim: #cfc8b8;
+    --final-call: #c1440e;
+    --ok-green: #4f8a5b;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--board-navy);
+    background-image:
+      radial-gradient(ellipse at top, rgba(255,255,255,0.04), transparent 60%),
+      repeating-linear-gradient(0deg, rgba(0,0,0,0.15) 0px, rgba(0,0,0,0.15) 1px, transparent 1px, transparent 3px);
+    color: var(--paper);
+    font-family: 'IBM Plex Sans', sans-serif;
+    min-height: 100vh;
+    padding: 32px 16px 64px;
+  }
+
+  .wrap {
+    max-width: 880px;
+    margin: 0 auto;
+  }
+
+  header.masthead {
+    text-align: center;
+    margin-bottom: 28px;
+  }
+
+  .eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    letter-spacing: 0.35em;
+    font-size: 11px;
+    color: var(--flap-amber);
+    text-transform: uppercase;
+  }
+
+  h1 {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 700;
+    font-size: clamp(28px, 5vw, 44px);
+    margin: 8px 0 4px;
+    letter-spacing: 0.02em;
+  }
+
+  .subhead {
+    color: var(--paper-dim);
+    font-size: 14px;
+  }
+
+  /* --- Departure board --- */
+  .board {
+    background: linear-gradient(180deg, var(--panel), #0f2130);
+    border: 1px solid var(--panel-edge);
+    border-radius: 6px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.03);
+    padding: 6px;
+    margin-bottom: 24px;
+  }
+
+  .board-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .board-row:last-child { border-bottom: none; }
+
+  .row-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--paper-dim);
+  }
+  .row-label .date-line {
+    display: block;
+    font-size: 11px;
+    color: rgba(242,237,227,0.5);
+    letter-spacing: 0.08em;
+    margin-top: 2px;
+  }
+
+  .flap-group {
+    display: flex;
+    gap: 6px;
+    justify-content: flex-end;
+  }
+
+  .flap {
+    background: #10222f;
+    border: 1px solid #23415a;
+    border-radius: 4px;
+    padding: 6px 10px;
+    min-width: 46px;
+    text-align: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 700;
+    font-size: clamp(22px, 4vw, 32px);
+    color: var(--flap-amber);
+    text-shadow: 0 0 8px rgba(244,165,33,0.35);
+    position: relative;
+    animation: flapIn 0.5s ease-out;
+  }
+  .flap::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; top: 50%;
+    height: 1px;
+    background: rgba(0,0,0,0.5);
+  }
+  .flap-unit {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--paper-dim);
+    align-self: center;
+    letter-spacing: 0.1em;
+    margin-right: 4px;
+  }
+
+  @keyframes flapIn {
+    0% { transform: rotateX(90deg); opacity: 0.3; }
+    100% { transform: rotateX(0deg); opacity: 1; }
+  }
+
+  .status {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    padding: 3px 8px;
+    border-radius: 3px;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .status.ok { background: rgba(79,138,91,0.2); color: #86c993; }
+  .status.final { background: rgba(193,68,14,0.2); color: #ff8a5c; }
+  .status.done { background: rgba(244,165,33,0.2); color: var(--flap-amber); }
+
+  /* --- Adjustments panel --- */
+  .adjustments {
+    background: var(--panel);
+    border: 1px dashed var(--panel-edge);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-bottom: 24px;
+  }
+  .adj-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--flap-amber);
+    margin-bottom: 10px;
+  }
+  .adj-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 6px 0;
+  }
+  .adj-row label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    color: var(--paper);
+    display: flex;
+    flex-direction: column;
+  }
+  .adj-hint {
+    font-size: 10px;
+    color: var(--paper-dim);
+    letter-spacing: 0.03em;
+    margin-top: 2px;
+  }
+  .adj-row input[type="number"] {
+    width: 72px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 16px;
+    font-weight: 600;
+    text-align: center;
+    background: #10222f;
+    border: 1px solid #23415a;
+    color: var(--flap-amber);
+    border-radius: 4px;
+    padding: 6px 4px;
+  }
+  .adj-row input[type="number"]:focus {
+    outline: 2px solid var(--flap-amber);
+    outline-offset: 1px;
+  }
+  .adj-note {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--paper-dim);
+    margin-top: 8px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding-top: 8px;
+  }
+
+  /* --- Boarding pass / today's date --- */
+  .pass {
+    background: var(--paper);
+    color: #1a1a1a;
+    border-radius: 8px;
+    display: flex;
+    overflow: hidden;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.35);
+    margin-bottom: 28px;
+  }
+  .pass-main {
+    flex: 1;
+    padding: 18px 20px;
+  }
+  .pass-eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: #8a8171;
+    text-transform: uppercase;
+  }
+  .pass-today {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 600;
+    font-size: 20px;
+    margin-top: 4px;
+  }
+  .pass-stub {
+    width: 90px;
+    background: repeating-linear-gradient(180deg, transparent, transparent 6px, rgba(0,0,0,0.15) 6px, rgba(0,0,0,0.15) 12px);
+    border-left: 2px dashed #b9b09c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: #6e6656;
+    writing-mode: vertical-rl;
+    letter-spacing: 0.15em;
+  }
+
+  /* --- Destination card --- */
+  .destination {
+    background: var(--panel);
+    border: 1px solid var(--panel-edge);
+    border-radius: 10px;
+    padding: 20px;
+  }
+
+  .destination-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .destination h2 {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--flap-amber);
+    margin: 0;
+  }
+
+  .photo-frame {
+    background: var(--paper);
+    border-radius: 6px;
+    padding: 10px 10px 46px;
+    position: relative;
+    box-shadow: 0 10px 24px rgba(0,0,0,0.4);
+    transform: rotate(-0.6deg);
+  }
+
+  .photo-frame img {
+    width: 100%;
+    display: block;
+    border-radius: 2px;
+    background: #ddd8cb;
+    min-height: 220px;
+    object-fit: cover;
+    max-height: 420px;
+  }
+
+  .caption {
+    position: absolute;
+    bottom: 12px;
+    left: 14px;
+    right: 14px;
+    font-family: 'IBM Plex Mono', monospace;
+    color: #1a1a1a;
+    font-size: 13px;
+    font-style: italic;
+    text-align: center;
+  }
+
+  .photo-credit {
+    font-size: 10px;
+    color: var(--paper-dim);
+    margin-top: 10px;
+    text-align: right;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .photo-credit a { color: var(--paper-dim); }
+
+  .reroute-btn {
+    font-family: 'IBM Plex Mono', monospace;
+    background: var(--flap-amber);
+    color: #1a1305;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .reroute-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(244,165,33,0.35); }
+  .reroute-btn:active { transform: translateY(0); }
+  .reroute-btn:disabled { opacity: 0.5; cursor: wait; }
+
+  .loading-text {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--paper-dim);
+    text-align: center;
+    padding: 40px 0;
+  }
+
+  footer {
+    text-align: center;
+    margin-top: 28px;
+    font-size: 11px;
+    color: rgba(242,237,227,0.35);
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  @media (max-width: 520px) {
+    .board-row { grid-template-columns: 1fr; }
+    .flap-group { justify-content: flex-start; }
+    .pass { flex-direction: column; }
+    .pass-stub { width: 100%; writing-mode: horizontal-tb; padding: 6px 0; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="eyebrow">Departures</div>
+    <h1>Now Boarding: Retirement</h1>
+    <div class="subhead">One working day at a time — Austrian weekends &amp; public holidays excluded.</div>
+  </header>
+
+  <div class="board" id="board">
+    <!-- filled by JS -->
+  </div>
+
+  <div class="adjustments" id="adjustments">
+    <div class="adj-title">Flight Manifest Adjustments</div>
+    <div class="adj-row">
+      <label for="holiday-input">
+        Holiday
+        <span class="adj-hint">days off between now and the end date</span>
+      </label>
+      <input type="number" id="holiday-input" step="1">
+    </div>
+    <div class="adj-row">
+      <label for="homeoffice-input">
+        Home Office
+        <span class="adj-hint">remote days, not on-site</span>
+      </label>
+      <input type="number" id="homeoffice-input" step="1">
+    </div>
+    <div class="adj-note" id="adj-note"></div>
+  </div>
+
+  <div class="pass">
+    <div class="pass-main">
+      <div class="pass-eyebrow">Today</div>
+      <div class="pass-today" id="today-date">—</div>
+    </div>
+    <div class="pass-stub">BOARDING PASS</div>
+  </div>
+
+  <div class="destination">
+    <div class="destination-head">
+      <h2 id="destination-label">Today's Idea for the Runway Ahead</h2>
+      <button class="reroute-btn" id="reroute-btn">Reroute me</button>
+    </div>
+    <div class="photo-frame">
+      <img id="photo" src="" alt="Retirement idea" style="display:none;">
+      <div class="loading-text" id="loading-text">Consulting the departure board…</div>
+      <div class="caption" id="caption"></div>
+    </div>
+    <div class="photo-credit" id="photo-credit"></div>
+  </div>
+
+  <footer>Gate closes 28 · 04 · 2028 — last call for one more Friday</footer>
+</div>
+
+<script>
+// ---------- Countdown (Austrian working days) ----------
+const LAST_WORKING_DAY = new Date(2028, 3, 28); // month is 0-indexed: April = 3
+const OFFICIAL_LAST_DAY = new Date(2028, 3, 30);
+
+function startOfDay(d) {
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+}
+function addDays(d, n) {
+  const r = new Date(d);
+  r.setDate(r.getDate() + n);
+  return r;
+}
+function sameDate(a, b) {
+  return startOfDay(a).getTime() === startOfDay(b).getTime();
+}
+function dateKey(d) {
+  return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
+}
+
+// Gregorian Easter Sunday (Anonymous/Meeus algorithm) — used to derive
+// Austria's movable public holidays for any given year.
+function easterSunday(year) {
+  const a = year % 19;
+  const b = Math.floor(year / 100);
+  const c = year % 100;
+  const d = Math.floor(b / 4);
+  const e = b % 4;
+  const f = Math.floor((b + 8) / 25);
+  const g = Math.floor((b - f + 1) / 3);
+  const h = (19 * a + b - d - g + 15) % 30;
+  const i = Math.floor(c / 4);
+  const k = c % 4;
+  const l = (32 + 2 * e + 2 * i - h - k) % 7;
+  const m = Math.floor((a + 11 * h + 22 * l) / 451);
+  const month = Math.floor((h + l - 7 * m + 114) / 31); // 3=March, 4=April
+  const day = ((h + l - 7 * m + 114) % 31) + 1;
+  return new Date(year, month - 1, day);
+}
+
+// Austria's nationwide public holidays (gesetzliche Feiertage).
+// Note: a few Bundesländer add local extras (e.g. St. Joseph's Day in
+// some states) which aren't included here since they're not nationwide.
+function austrianHolidays(year) {
+  const easter = easterSunday(year);
+  const fixed = [
+    new Date(year, 0, 1),   // Neujahr
+    new Date(year, 0, 6),   // Heilige Drei Könige
+    new Date(year, 4, 1),   // Staatsfeiertag
+    new Date(year, 7, 15),  // Mariä Himmelfahrt
+    new Date(year, 9, 26),  // Nationalfeiertag
+    new Date(year, 10, 1),  // Allerheiligen
+    new Date(year, 11, 8),  // Mariä Empfängnis
+    new Date(year, 11, 25), // Christtag
+    new Date(year, 11, 26)  // Stefanitag
+  ];
+  const movable = [
+    addDays(easter, 1),   // Ostermontag
+    addDays(easter, 39),  // Christi Himmelfahrt
+    addDays(easter, 50),  // Pfingstmontag
+    addDays(easter, 60)   // Fronleichnam
+  ];
+  return [...fixed, ...movable].map(dateKey);
+}
+
+function isWorkingDay(d, holidaySet) {
+  const dow = d.getDay(); // 0 Sun, 6 Sat
+  if (dow === 0 || dow === 6) return false;
+  if (holidaySet.has(dateKey(d))) return false;
+  return true;
+}
+
+// Inclusive count of Austrian working days between two dates (order-agnostic).
+function workingDaysInclusive(from, to) {
+  let start = startOfDay(from);
+  let end = startOfDay(to);
+  let sign = 1;
+  if (start > end) { [start, end] = [end, start]; sign = -1; }
+  const years = new Set([start.getFullYear(), end.getFullYear()]);
+  const holidaySet = new Set();
+  years.forEach(y => austrianHolidays(y).forEach(k => holidaySet.add(k)));
+  let count = 0;
+  let cur = start;
+  while (cur <= end) {
+    if (isWorkingDay(cur, holidaySet)) count++;
+    cur = addDays(cur, 1);
+  }
+  return count * sign;
+}
+
+function fmtFlaps(n) {
+  const s = Math.abs(n).toString();
+  return s.split('').map(ch => `<div class="flap">${ch}</div>`).join('');
+}
+
+// ---------- Holiday / Home Office adjustments ----------
+// Default Holiday = round(weeks between today and the end date (30 Apr 2028) * 0.6)
+function calcHolidayDefault() {
+  const now = new Date();
+  const MS_PER_WEEK = 7 * 24 * 60 * 60 * 1000;
+  const weeks = (startOfDay(OFFICIAL_LAST_DAY) - startOfDay(now)) / MS_PER_WEEK;
+  return Math.round(weeks * 0.6); // standard rounding (.5 rounds up)
+}
+
+const holidayDefault = calcHolidayDefault();
+let holidayValue = holidayDefault;
+let homeOfficeValue = 0;
+
+function renderBoard() {
+  const now = new Date();
+  const wWork = workingDaysInclusive(now, LAST_WORKING_DAY);
+  const wOfficial = workingDaysInclusive(now, OFFICIAL_LAST_DAY);
+  const todayIsLastDay = sameDate(now, LAST_WORKING_DAY);
+
+  const deduction = (Number.isFinite(holidayValue) ? holidayValue : 0)
+                  + (Number.isFinite(homeOfficeValue) ? homeOfficeValue : 0);
+
+  const adjWork = Math.max(0, wWork - deduction);
+  const adjOfficial = Math.max(0, wOfficial - deduction);
+
+  const rows = [
+    { label: 'Working days at the desk', dateStr: 'Fri 28 Apr 2028 · AT holidays excluded', days: adjWork, isToday: todayIsLastDay && deduction === 0 },
+    { label: 'Working days to official last day', dateStr: 'Sun 30 Apr 2028 · AT holidays excluded', days: adjOfficial, isToday: sameDate(now, OFFICIAL_LAST_DAY) && deduction === 0 }
+  ];
+
+  const board = document.getElementById('board');
+  board.innerHTML = rows.map(r => {
+    let statusHtml, flapsHtml;
+    if (r.days > 1) {
+      statusHtml = `<span class="status ok">${r.days} work days out</span>`;
+      flapsHtml = `<span class="flap-unit">WORK<br>DAYS</span>${fmtFlaps(r.days)}`;
+    } else if (r.isToday) {
+      statusHtml = `<span class="status final">Departing today</span>`;
+      flapsHtml = `<div class="flap">✈</div>`;
+    } else if (r.days === 1) {
+      statusHtml = `<span class="status final">Final call</span>`;
+      flapsHtml = `<span class="flap-unit">WORK<br>DAYS</span>${fmtFlaps(r.days)}`;
+    } else {
+      statusHtml = `<span class="status done">Landed</span>`;
+      flapsHtml = `<span class="flap-unit">WORK<br>DAYS LEFT</span>${fmtFlaps(r.days)}`;
+    }
+    return `
+      <div class="board-row">
+        <div class="row-label">${r.label}<span class="date-line">${r.dateStr}</span></div>
+        <div class="flap-group">${flapsHtml}</div>
+      </div>`;
+  }).join('') + `
+      <div class="board-row" style="border-bottom:none; justify-content:flex-end;">
+        <div></div>
+        <div>${adjWork <= 0 ? '<span class="status done">Enjoy the flight 🎉</span>' : ''}</div>
+      </div>`;
+
+  document.getElementById('today-date').textContent = now.toLocaleDateString(undefined, {
+    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+  });
+
+  const note = document.getElementById('adj-note');
+  if (note) {
+    note.textContent = `Raw working days at the desk: ${wWork}. Minus ${holidayValue} holiday + ${homeOfficeValue} home office = ${adjWork} shown above.`;
+  }
+}
+
+function initAdjustmentInputs() {
+  const holidayInput = document.getElementById('holiday-input');
+  const homeOfficeInput = document.getElementById('homeoffice-input');
+
+  holidayInput.value = holidayDefault;
+  homeOfficeInput.value = 0;
+  holidayInput.placeholder = String(holidayDefault);
+
+  holidayInput.addEventListener('input', () => {
+    const v = parseInt(holidayInput.value, 10);
+    holidayValue = Number.isFinite(v) ? v : holidayDefault;
+    renderBoard();
+  });
+
+  homeOfficeInput.addEventListener('input', () => {
+    const v = parseInt(homeOfficeInput.value, 10);
+    homeOfficeValue = Number.isFinite(v) ? v : 0;
+    renderBoard();
+  });
+}
+
+initAdjustmentInputs();
+
+renderBoard();
+
+// ---------- Daily / shuffle retirement idea image ----------
+// Wikimedia Commons categories: broad, hobby-based, no gender/beauty framing.
+const IDEAS = [
+  { cat: 'Recreational fishing', caption: 'New job title: professional bait negotiator.' },
+  { cat: 'Golf',                 caption: 'Handicap: emotional and literal.' },
+  { cat: 'Gardening',            caption: 'Promoted to Director of Tomatoes.' },
+  { cat: 'Hiking',               caption: 'Walking meetings, except the meeting is a mountain.' },
+  { cat: 'Recreational vehicles',caption: 'New commute: anywhere, eventually.' },
+  { cat: 'Sailing',              caption: 'The office now has a horizon.' },
+  { cat: 'Woodworking',          caption: 'Turning wood into confidently crooked shelves.' },
+  { cat: 'Beekeeping',           caption: '40,000 new coworkers, all of them buzzing.' },
+  { cat: 'Home brewing',         caption: 'Quality control is now a full-time role.' },
+  { cat: 'Guitars',              caption: 'Finally finishing that solo from 1998.' },
+  { cat: 'Barbecuing',           caption: 'Elected CEO of the grill, term: indefinite.' },
+  { cat: 'Chess',                caption: 'Now with time to lose slowly and with dignity.' },
+  { cat: 'Birdwatching',         caption: 'Trading notifications for actual tweets.' },
+  { cat: 'Cycling',              caption: 'Peloton of one. No deadlines, all downhill.' },
+  { cat: 'Astronomy',            caption: 'Looking at other things that are also, eventually, retiring.' },
+  { cat: 'Rail transport modelling', caption: 'Micromanaging trains that actually run on time.' },
+  { cat: 'Kayaking',             caption: 'New KPI: remain upright.' },
+  { cat: 'Jigsaw puzzles',       caption: '1,000 pieces. Zero deadlines.' },
+  { cat: 'Wine tasting',         caption: 'Now doing "market research" full time.' },
+  { cat: 'Photography',         caption: 'New LinkedIn headline: freelance everything.' },
+  { cat: 'Cruise ships',         caption: 'Corner office now comes with a pool.' },
+  { cat: 'Motorcycling',         caption: 'A scheduled, punctual midlife crisis.' },
+  { cat: 'Board games',          caption: 'Boardroom traded for board games. Strictly better.' },
+  { cat: 'Camping',              caption: 'New conference room: outdoors, no wifi, no complaints.' },
+  { cat: 'Bowling',              caption: 'Turkey season, every season.' },
+  { cat: 'Cooking',              caption: 'Finally has time to burn dinner properly.' },
+  { cat: 'Volunteering',         caption: 'Still has meetings. Nobody makes him.' }
+];
+
+const BAD_WORDS = ['icon','logo','seal','flag','map','diagram','symbol','coa','crest','svg','template'];
+
+function dayOfYear(d) {
+  const start = new Date(d.getFullYear(), 0, 0);
+  return Math.floor((d - start) / (24 * 60 * 60 * 1000));
+}
+
+let ideaIndex = dayOfYear(new Date()) % IDEAS.length;
+let cache = {}; // cat -> list of {url, page, credit}
+
+async function fetchCategoryImages(cat) {
+  if (cache[cat]) return cache[cat];
+  const endpoint = 'https://commons.wikimedia.org/w/api.php?action=query&generator=categorymembers'
+    + '&gcmtitle=' + encodeURIComponent('Category:' + cat)
+    + '&gcmtype=file&gcmlimit=50&prop=imageinfo&iiprop=url|extmetadata|mime&format=json&origin=*';
+  const res = await fetch(endpoint);
+  const data = await res.json();
+  const pages = data && data.query && data.query.pages ? Object.values(data.query.pages) : [];
+  const list = pages
+    .map(p => p.imageinfo && p.imageinfo[0])
+    .filter(info => info && info.mime && (info.mime === 'image/jpeg' || info.mime === 'image/png'))
+    .filter(info => {
+      const lower = info.url.toLowerCase();
+      return !BAD_WORDS.some(w => lower.includes(w));
+    })
+    .map(info => {
+      const meta = info.extmetadata || {};
+      const artist = meta.Artist ? meta.Artist.value.replace(/<[^>]+>/g, '') : 'Wikimedia Commons contributor';
+      return { url: info.url, credit: artist };
+    });
+  cache[cat] = list;
+  return list;
+}
+
+function seededPick(list, seed) {
+  // simple deterministic pseudo-random pick from seed
+  const x = Math.sin(seed) * 10000;
+  const frac = x - Math.floor(x);
+  return list[Math.floor(frac * list.length)];
+}
+
+async function showIdea(index, opts = {}) {
+  const idea = IDEAS[index];
+  const img = document.getElementById('photo');
+  const loadingText = document.getElementById('loading-text');
+  const caption = document.getElementById('caption');
+  const credit = document.getElementById('photo-credit');
+  const label = document.getElementById('destination-label');
+
+  img.style.display = 'none';
+  caption.textContent = '';
+  credit.textContent = '';
+  loadingText.style.display = 'block';
+  loadingText.textContent = 'Consulting the departure board…';
+  label.textContent = "Today's Idea for the Runway Ahead";
+
+  try {
+    const list = await fetchCategoryImages(idea.cat);
+    if (!list.length) throw new Error('no images');
+    const seed = opts.random ? Math.random() * 100000 : dayOfYear(new Date()) + index * 17;
+    const pick = opts.random ? list[Math.floor(Math.random() * list.length)] : seededPick(list, seed);
+
+    img.onload = () => {
+      loadingText.style.display = 'none';
+      img.style.display = 'block';
+    };
+    img.onerror = () => {
+      loadingText.textContent = 'That runway is closed. Tap "Reroute me" to try another.';
+    };
+    img.src = pick.url;
+    caption.textContent = idea.caption;
+    credit.innerHTML = 'Photo via Wikimedia Commons · ' + credit_escape(pick.credit);
+  } catch (e) {
+    loadingText.textContent = 'That runway is closed. Tap "Reroute me" to try another.';
+  }
+}
+
+function credit_escape(s) {
+  const div = document.createElement('div');
+  div.textContent = s;
+  return div.innerHTML;
+}
+
+showIdea(ideaIndex);
+
+document.getElementById('reroute-btn').addEventListener('click', async () => {
+  const btn = document.getElementById('reroute-btn');
+  btn.disabled = true;
+  ideaIndex = (ideaIndex + 1) % IDEAS.length;
+  await showIdea(ideaIndex, { random: true });
+  btn.disabled = false;
+});
+
+// Refresh the board at midnight-ish without requiring a manual reload
+setInterval(renderBoard, 60 * 1000);
+</script>
+</body>
+</html>
